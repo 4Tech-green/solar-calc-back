@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(psql -U postgres -c \"CREATE DATABASE solar_calc;\")",
+      "Bash(psql -U gabriel -c \"CREATE DATABASE solar_calc;\")",
+      "Bash(sudo -u postgres psql -c \"CREATE DATABASE solar_calc;\")",
+      "Bash(sudo -u postgres psql -c \"CREATE USER solar_user WITH PASSWORD 'solar123';\")",
+      "Bash(sudo -u postgres psql -c \"GRANT ALL PRIVILEGES ON DATABASE solar_calc TO solar_user;\")",
+      "Bash(sudo:*)",
+      "Bash(psql:*)",
+      "Bash(PGPASSWORD=solar123 psql:*)",
+      "Read(//home/gabriel/4tech/**)",
+      "Bash(npm create:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(curl -s http://localhost:5173)",
+      "Bash(curl -s \"https://openrouter.ai/api/v1/models\")",
+      "Bash(python3 -c ' *)"
+    ]
+  }
+}
