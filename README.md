@@ -1,19 +1,21 @@
-# SolarCalc
+# SolarCalc — Backend
 
-Aplicação de análise de viabilidade de energia solar. Recebe uma imagem de conta de luz, extrai os dados via IA e retorna opções de sistema solar com custo, retorno financeiro e legislação local.
+API REST de análise de viabilidade de energia solar. Recebe uma imagem de conta de luz, extrai os dados via IA e retorna opções de sistema solar com custo, retorno financeiro e legislação local.
+
+**Deploy:** https://solar-calc-back.onrender.com  
+**Frontend:** https://solar-calc-front.vercel.app
 
 ---
 
 ## Pré-requisitos
 
-- Java 17+
-- Maven (ou use o `./mvnw` incluído)
-- Node.js 18+
+- Java 21+
+- Maven (ou use o `./mvnw` incluído no projeto)
 - PostgreSQL 16 rodando localmente
 
 ---
 
-## Banco de dados
+## Configuração do banco de dados
 
 Na primeira vez, crie o banco e o usuário:
 
@@ -31,61 +33,44 @@ GRANT ALL ON SCHEMA public TO solar_user;
 
 ---
 
-## Rodando o backend
+## Clonando e rodando
 
 ```bash
-cd /home/gabriel/4tech/solar-calc
+git clone https://github.com/4Tech-green/solar-calc-back.git
+cd solar-calc-back
 ./mvnw spring-boot:run
 ```
 
-O Hibernate cria as tabelas automaticamente na primeira execução.
-
 API disponível em: `http://localhost:8080`
 
----
-
-## Rodando o frontend
-
-```bash
-cd /home/gabriel/4tech/solar-calc-front
-npm run dev
-```
-
-Interface disponível em: `http://localhost:5173`
+O Hibernate cria as tabelas automaticamente na primeira execução.
 
 ---
 
-## Testando o fluxo completo
+## Variáveis de ambiente (opcional)
 
-Com backend e frontend rodando, acesse `http://localhost:5173`, envie qualquer imagem e veja o resultado.
-
-Ou via curl:
+Por padrão o projeto usa o banco local configurado acima. Para usar outras configurações, exporte as variáveis antes de rodar:
 
 ```bash
-curl -X POST http://localhost:8080/api/analise/upload -F "imagem=@/tmp/teste.jpg"
+export DATABASE_URL=jdbc:postgresql://localhost:5432/solar_calc
+export DATABASE_USERNAME=solar_user
+export DATABASE_PASSWORD=solar123
+export OPENROUTER_API_KEY=sua_chave_aqui   # obtenha grátis em openrouter.ai
 ```
+
+Sem a `OPENROUTER_API_KEY` o sistema roda com dados mockados (CPFL Paulista / Sorocaba-SP).
 
 ---
 
 ## Estrutura do projeto
 
 ```
-solar-calc/                  # Backend Spring Boot
-├── src/main/java/com/example/demo/
-│   ├── controller/          # AnaliseController — endpoints REST
-│   ├── entity/              # Cliente, ContaDeLuz, AnaliseViabilidade
-│   ├── repository/          # Interfaces JPA
-│   ├── service/             # ExtracacaoContaService (mock/IA), ViabilidadeService
-│   └── dto/                 # DadosContaExtraidos, ResultadoViabilidade
-└── src/main/resources/
-    └── application.properties
-
-solar-calc-front/            # Frontend React + Vite + Tailwind
-└── src/
-    ├── App.jsx
-    └── pages/
-        ├── LandingPage.jsx  # Upload da conta de luz
-        └── ResultadoPage.jsx # Opções de sistema solar
+src/main/java/com/example/demo/
+├── controller/    # AnaliseController — endpoints REST
+├── entity/        # Cliente, ContaDeLuz, AnaliseViabilidade
+├── repository/    # Interfaces JPA
+├── service/       # ExtracacaoContaService (IA/mock), ViabilidadeService
+└── dto/           # DadosContaExtraidos, ResultadoViabilidade
 ```
 
 ---
@@ -94,15 +79,5 @@ solar-calc-front/            # Frontend React + Vite + Tailwind
 
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
-| POST | `/api/analise/upload` | Recebe imagem, processa e retorna análise |
+| POST | `/api/analise/upload` | Recebe imagem, processa e retorna análise completa |
 | GET | `/api/analise/{id}` | Retorna análise salva por ID |
-| GET | `/api/analise/cliente/{id}` | Retorna dados do cliente por ID |
-
----
-
-## Próximos passos
-
-- [ ] Integrar IA real (Gemini Vision ou OpenAI Vision)
-- [ ] Criar frontend de resultado mais detalhado
-- [ ] Adicionar geocoding para coordenadas do endereço
-- [ ] Deploy no Railway ou Render
